@@ -1,8 +1,8 @@
-from fastapi import APIRouter, HTTPException, Request
-
+from fastapi import APIRouter, HTTPException, Request, Depends
+from app.security import verify_signature
 router = APIRouter()
 
-@router.post("/webhook")
+@router.post("/webhook", dependencies=[Depends(verify_signature)])
 async def receive_webhook(request: Request):
     payload = await request.json()
 
