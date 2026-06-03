@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from github import Github
 from github.GithubException import GithubException
+import asyncio
 
 load_dotenv()
 
@@ -33,3 +34,4 @@ def post_pr_comment(repo_full_name: str, pr_number:int, comment:str):
     repo = client.get_repo(repo_full_name)
     pr = repo.get_pull(pr_number)
     pr.create_issue_comment(comment)
+    
