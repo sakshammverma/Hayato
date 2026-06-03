@@ -15,6 +15,7 @@ async def verify_signature(request:Request):
 
     print(f"[DEBUG] Secret loaded: {bool(secret)}")
     print(f"[DEBUG] Signature header: {signature_head}")
+    print(f"[DEBUG] All headers: {dict(request.headers)}")
 
     if not signature_head:
         raise HTTPException(status_code=401, detail="Missing signature")
