@@ -11,7 +11,7 @@ async def verify_signature(request:Request):
     if not secret:
         raise HTTPException(status_code=401, detail="Missing webhook secret")
 
-    signature_head = request.headers.get("X-Hub_Signature-256")  
+    signature_head = request.headers.get("x-hub-signature-256")  
 
     print(f"[DEBUG] Secret loaded: {bool(secret)}")
     print(f"[DEBUG] Signature header: {signature_head}")

@@ -8,7 +8,7 @@ router = APIRouter()
 async def receive_webhook(request: Request):
     payload = await request.json()
 
-    event_type = request.headers.get("X-GitHub-Event", "unknown")
+    event_type = request.headers.get("x-gitHub-event", "unknown")
 
     if event_type == "ping":
         return {"message": "pong"}
