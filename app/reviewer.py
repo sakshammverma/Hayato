@@ -14,7 +14,7 @@ async def review_file(
     diff: str   
 ) -> str:
     if risk_level == "high":
-        model = "gemini/gemini-1.5-flash"
+        model = "gemini/gemini-2.0-flash"
     elif risk_level == "medium":
         model = "groq/llama-3.3-70b-versatile"
     else:
