@@ -13,12 +13,10 @@ async def review_file(
     risk_level: str,
     diff: str   
 ) -> str:
-    if risk_level == "high":
-        model = "gemini/gemini-2.0-flash"
-    elif risk_level == "medium":
-        model = "groq/llama-3.3-70b-versatile"
-    else:
+    if risk_level == "low":
         model = "groq/llama-3.1-8b-instant"
+    else:
+        model = "groq/llama-3.3-70b-versatile"
 
     user_prompt = f"""PR Title:
     
