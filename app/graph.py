@@ -29,6 +29,7 @@ async def fetch_files_node(state: ReviewState) -> dict:
         state["repo_full_name"],
         state["pr_number"]
     )
+    print(f"DEBUG: Fetched {len(files)} files")
     return {"files": files}
 
 def coordinator_node(state: ReviewState):
@@ -45,6 +46,7 @@ def coordinator_node(state: ReviewState):
             "patch": patch,
             "risk": classify_risk(f["filename"])
         }))
+    print(f"DEBUG: Coordinator created {len(sends)} parallel tasks")
     return sends
 
 async def review_file_node(state: FileReviewState) -> dict:
@@ -59,11 +61,15 @@ async def review_file_node(state: FileReviewState) -> dict:
     result = f"### `{state['filename']}` ({state['risk']} risk)\n\n{review}"
     return {"reviews": [result]}
 
-async def reducer_node(state: ReviewState) -> dict:
-    if not state["reviews"]:
+async def reducer_node(state: ReviewState) -> dict: 
+    reviews = state.get("reviews", []) 
+     
+    print(f"DEBUG: Reducer received {len(reviews)} reviews") 
+ 
+    if not reviews:
         return {}
     
-    combined = "\n\n---\n\n".join(state["reviews"])
+    combined = "\n\n---\n\n".join(reviews)
     await asyncio.to_thread(
         post_pr_comment,
         state["repo_full_name"],
@@ -84,7 +90,7 @@ def build_graph():
     graph.add_edge("fetch_files", "coordinator")
     graph.add_conditional_edges("coordinator", lambda x: x)
     graph.add_edge("review_file_node", "reducer")
-    graph.add_edge("reducer",          END)
+    graph.add_edge("reducer", END)
 
     return graph.compile()
 
