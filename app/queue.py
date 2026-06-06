@@ -16,7 +16,7 @@ QUEUE_NAME = "pr-review-jbs"
 def enqueue_jb(job: dict):
     client.lpush(QUEUE_NAME, json.dumps(job))
 
-def dequeue_job():
+def dequeue_jb():
     try:
         job = client.brpop(QUEUE_NAME, timeout=5)
         if job:
