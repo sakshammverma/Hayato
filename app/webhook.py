@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, Depends
 from app.security import verify_signature
-from app.queue import enqueue_jb
+from app.task_queue import enqueue_jb
 
 router = APIRouter()
 
@@ -28,9 +28,9 @@ async def receive_webhook(request: Request):
     repo_full_name = repo.get("full_name")
 
     job ={
-        "pr_number":      pr_number,
+        "pr_number":pr_number,
         "repo_full_name": repo_full_name,
-        "pr_title":       pr.get("title", ""),
+        "pr_title": pr.get("title", ""),
         "pr_description": pr.get("body", "")
     }
     enqueue_jb(job)
