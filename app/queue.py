@@ -20,10 +20,10 @@ client = redis.Redis(connection_pool=pool)
 
 QUEUE_NAME = "pr_review_jobs"
 
-def enqueue_job(job: dict):
+def enqueue_jb(job: dict):
     client.lpush(QUEUE_NAME, json.dumps(job))
 
-def dequeue_job():
+def dequeue_jb():
     try:
         job = client.brpop(QUEUE_NAME, timeout=5)
         if job:
