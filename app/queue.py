@@ -25,9 +25,10 @@ def enqueue_jb(job: dict):
 
 def dequeue_jb():
     try:
-        job = client.brpop(QUEUE_NAME, timeout=5)
-        if job:
-            return json.loads(job[1])
-        return None
+        job = client.lpop(QUEUE_NAME)
+        if job is None:
+            return None
+        return json.loads(job) # type: ignore
     except Exception:
         return None
+    

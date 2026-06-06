@@ -43,8 +43,8 @@ async def run_worker():
             if job:
                 print(f"[WORKER] Processing PR #{job['pr_number']}")
                 await process_job(job)
+            else:
+                await asyncio.sleep(2)  # wait 2 sec before checking again
         except Exception as e:
             print(f"[WORKER] Error: {e}, retrying in 5 sec...")
             await asyncio.sleep(5)
-
-
