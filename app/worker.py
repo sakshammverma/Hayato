@@ -38,9 +38,13 @@ async def process_job(job: dict):
 async def run_worker():
     print("[WORKER] Started, watching queue...")
     while True:
-        job = await asyncio.to_thread(dequeue_jb)
-        if job:
-            print(f"[WORKER] Processing PR #{job['pr_number']}")
-            await process_job(job)
+        try:
+            job = await asyncio.to_thread(dequeue_jb)
+            if job:
+                print(f"[WORKER] Processing PR #{job['pr_number']}")
+                await process_job(job)
+        except Exception as e:
+            print(f"[WORKER] Error: {e}, retrying in 5 sec...")
+            await asyncio.sleep(5)
 
 
