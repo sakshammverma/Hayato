@@ -9,7 +9,10 @@ redis_url = os.getenv("REDIS_URL")
 if redis_url is None:
     raise ValueError("REDIS_URL environment variable is required")
 
-client = redis.from_url(redis_url)
+client = redis.from_url(
+    redis_url,
+    ssl_cert_reqs=None,
+    decode_responses=True)
 
 QUEUE_NAME = "pr-review-jbs"
 
