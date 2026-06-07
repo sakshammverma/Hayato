@@ -23,12 +23,12 @@ async def process_job(job: dict):
     issues_found = reviews_text.count("* Severity:")
     
     # extract verdict
-    if "APPROVE" in reviews_text:
-        verdict = "APPROVE"
-    elif "REQUEST CHANGES" in reviews_text:
+    if "REQUEST CHANGES" in reviews_text:
         verdict = "REQUEST CHANGES"
-    else:
+    elif "NEEDS DISCUSSION" in reviews_text:
         verdict = "NEEDS DISCUSSION"
+    else:
+        verdict = "APPROVE"
 
     save_review(
         repo_name=job["repo_full_name"],
