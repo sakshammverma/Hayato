@@ -6,6 +6,7 @@ import operator
 from app.github import get_pr_diff, post_pr_comment
 from app.reviewer import review_file
 from app.utils import classify_risk
+from app.cache import get_cached_review, cache_review
 
 class ReviewState(TypedDict):
     pr_number:int
@@ -50,6 +51,19 @@ def coordinator_routing(state: ReviewState) -> list:
     return sends
 
 async def review_file_node(state: FileReviewState) -> dict:
+     
+    cached = get_cached_review(
+        state["repo_full_name"],
+        state["filename"],
+        state["patch"]
+    )
+     # hit
+    if cached:
+        print(f"[CACHE] HIT → {state['filename']}")
+        result = f"### `{state['filename']}` ({state['risk']} risk)\n\n{cached}"
+        return {"reviews": [result]}
+    # miss, call llm
+    print(f"[CACHE] MISS → {state['filename']}, calling LLM..")
     review = await review_file(
         pr_title = state["pr_title"],
         pr_description = state["pr_description"],
@@ -58,6 +72,8 @@ async def review_file_node(state: FileReviewState) -> dict:
         risk_level = state["risk"],
         diff = state["patch"]
     )
+    # store in cache for next time 
+    cache_review(state["repo_full_name"], state["filename"], state["patch"], review)
     result = f"### `{state['filename']}` ({state['risk']} risk)\n\n{review}"
     return {"reviews": [result]}
 
