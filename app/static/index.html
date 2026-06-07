@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PR Review Bot Dashboard</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        .approve { background: #90EE90; }
+        .changes { background: #FFB6C6; }
+    </style>
+</head>
+<body>
+    <h1>PR Review Bot Dashboard</h1>
+    <table id="reviews">
+        <tr>
+            <th>Repository</th>
+            <th>PR #</th>
+            <th>Verdict</th>
+            <th>Issues</th>
+            <th>Files</th>
+            <th>Reviewed</th>
+        </tr>
+    </table>
+    <script>
+        async function loadReviews() {
+            const res = await fetch('/api/reviews');
+            const reviews = await res.json();
+            const table = document.getElementById('reviews');
+            reviews.forEach(r => {
+                const row = table.insertRow();
+                row.className = r.verdict === 'APPROVE' ? 'approve' : 'changes';
+                row.innerHTML = `
+                    <td>${r.repo_name}</td>
+                    <td>#${r.pr_number}</td>
+                    <td>${r.verdict}</td>
+                    <td>${r.issues_found}</td>
+                    <td>${r.files_count}</td>
+                    <td>${new Date(r.reviewed_at).toLocaleDateString()}</td>
+                `;
+            });
+        }
+        loadReviews();
+        setInterval(loadReviews, 10000);
+    </script>
+</body>
+</html>
