@@ -7,7 +7,7 @@ from app.graph import review_graph
 from app.database import save_review
 
 async def process_job(job: dict):
-    await review_graph.ainvoke({
+    result=await review_graph.ainvoke({
         "pr_number": job["pr_number"],
         "repo_full_name": job["repo_full_name"],
         "pr_title": job["pr_title"],
@@ -15,6 +15,20 @@ async def process_job(job: dict):
         "files": [],
         "reviews": []
     })
+    # extract values from graph result
+    files_count= len(result.get("files", []))
+    reviews_text= "\n".join(result.get("reviews", []))
+    
+    # count issues by scanning review text
+    issues_found = reviews_text.count("* Severity:")
+    
+    # extract verdict
+    if "APPROVE" in reviews_text:
+        verdict = "APPROVE"
+    elif "REQUEST CHANGES" in reviews_text:
+        verdict = "REQUEST CHANGES"
+    else:
+        verdict = "NEEDS DISCUSSION"
 
     save_review(
         repo_name=job["repo_full_name"],
@@ -23,8 +37,8 @@ async def process_job(job: dict):
         issues_found=0,
         files_count=0
     )
-    print(f"[DB] Saved review for PR #{job['pr_number']}")
-    
+    print(f"[DB] Saved review for PR #{job['pr_number']} | {verdict} | {issues_found} issues")
+
 async def run_worker():
     print("[WORKER] Started, watching queue...")
     while True:
