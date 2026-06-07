@@ -4,9 +4,10 @@ from fastapi import FastAPI
 from app.webhook import router
 from app.worker import run_worker
 from fastapi.responses import JSONResponse
-
+from app.database import init_db
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    init_db()
     asyncio.create_task(run_worker())
     yield
 
