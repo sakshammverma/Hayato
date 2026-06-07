@@ -33,9 +33,9 @@ async def process_job(job: dict):
     save_review(
         repo_name=job["repo_full_name"],
         pr_number=job["pr_number"],
-        verdict="REQUEST CHANGES",
-        issues_found=0,
-        files_count=0
+        verdict=verdict,
+        issues_found=issues_found,
+        files_count=files_count
     )
     print(f"[DB] Saved review for PR #{job['pr_number']} | {verdict} | {issues_found} issues")
 
