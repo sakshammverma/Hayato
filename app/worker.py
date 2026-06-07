@@ -23,7 +23,8 @@ async def process_job(job: dict):
         issues_found=0,
         files_count=0
     )
-
+    print(f"[DB] Saved review for PR #{job['pr_number']}")
+    
 async def run_worker():
     print("[WORKER] Started, watching queue...")
     while True:
