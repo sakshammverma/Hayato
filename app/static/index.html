@@ -27,6 +27,10 @@
             const res = await fetch('/api/reviews');
             const reviews = await res.json();
             const table = document.getElementById('reviews');
+
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
             reviews.forEach(r => {
                 const row = table.insertRow();
                 row.className = r.verdict === 'APPROVE' ? 'approve' : 'changes';
