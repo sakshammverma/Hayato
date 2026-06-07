@@ -18,6 +18,14 @@ def extract_added_lines(patch: str) -> str:
     return "\n".join(lines)
 
 def run_sandbox(patch: str, filename: str) -> SandboxResult: 
+
+    if not filename.endswith(".py"):
+        return SandboxResult(
+            passed=True,
+            flake8_issues=[],
+            bandit_issues=[],
+            syntax_valid=True
+        )
     code= extract_added_lines(patch)
 
     if not code.strip():
