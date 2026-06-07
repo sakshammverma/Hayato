@@ -42,6 +42,13 @@ async def reviews_api():
         for r in reviews
     ]
 
+@app.get("/admin/clear-db")
+async def clear_db():
+    from app.database import engine, Base, init_db
+    Base.metadata.drop_all(bind=engine)
+    init_db()
+    return {"message": "Database cleared"}
+
 @app.api_route("/health", methods=["GET", "HEAD"])
 async def health_check():
     return JSONResponse({"status": "ok"})
